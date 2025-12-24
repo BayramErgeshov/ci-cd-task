@@ -1,0 +1,67 @@
+name: CI-CD pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  buildapp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Building application
+        run: |
+          echo "Building application..."
+          echo "Done"
+
+  rununittest:
+    runs-on: ubuntu-latest
+    needs: buildapp
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Prepare testdata
+        run: echo "Prepare testdata"
+      - name: Run unit tests
+        run: echo "running unit tests"
+
+  runlinttest:
+    runs-on: ubuntu-latest
+    needs: buildapp
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run lint tests
+        run: echo "Running lint tests"
+
+  buildimage:
+    runs-on: ubuntu-latest
+    needs: [rununittest, runlinttest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Building image
+        run: |
+          echo "Building image"
+          echo "Tagging image"
+
+  pushimage:
+    runs-on: ubuntu-latest
+    needs: buildimage
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Pushing image
+        run: echo "Pushing image"
+
+  deploystaging:
+    runs-on: ubuntu-latest
+    needs: pushimage
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Deploy staging server
+        run: echo "Deploy staging server"
